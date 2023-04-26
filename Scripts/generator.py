@@ -1,9 +1,10 @@
 import random, os
 import pandas as pd
 import tkinter.ttk as ttk
+import numpy as np
 from tkinter import *
 from tktooltip import ToolTip
-from math import pi, cos, sin
+from math import pi, cos, sin, sqrt
 
 
 # Class PointsSet
@@ -13,6 +14,9 @@ class PointsSet:
         self.points = points
         self.center = center
         self.circ_no = circ_no
+
+    def get_radius(self):
+        return np.median([sqrt((self.center[0]-p[0])**2 + (self.center[1]-p[1])**2) for p in self.points])
 
     def add_point(self, point):
         self.points.append(point)
@@ -36,31 +40,52 @@ class PointsSet:
 # Dataset generation
 
 def get_circunference_points(n, center, rad):
-    RANDOMNESS = float(rde.get())
-
     points = []
     for _ in range(n):
         theta = random.random() * 2 * pi
-        x = center[0] + cos(theta)*rad*RANDOMNESS + (random.random()/10)*rad
-        y = center[1] + sin(theta) * rad*RANDOMNESS + (random.random()/10)*rad
+        x = center[0] + cos(theta)*rad + (random.random()/10)*rad*RANDOMNESS
+        y = center[1] + sin(theta)*rad + (random.random()/10)*rad*RANDOMNESS
         points.append((x,y)) if 0<=x<=100 and 0<=y<=100 else _ # We only add those points inside the valid range
     return points
     
-def get_data():
-    NUM_CIRC = int(nce.get())
-    RANGE_RADIUS = (float(rre.get().split(",")[0]), float(rre.get().split(",")[1]))
-    RANGE_POINTS = (int(rpe.get().split(",")[0]), int(rpe.get().split(",")[1]))
-    NOISE_RATIO = float(nre.get())
+def get_data(set_type):
+    centers = [(random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)) for _ in range(NUM_CIRC)]
+    radii = [random.randint(*RANGE_RADIUS) for _ in range(NUM_CIRC)]
+    collides = any(any((centers[i][0]-centers[j][0])**2 + (centers[i][1]-centers[j][1])**2 <= (radii[i]+radii[j])**2 for i in range(j+1, NUM_CIRC)) for j in range(NUM_CIRC))
+    extends = any(0>=centers[i][0]-radii[i] or radii[i]+centers[i][0]>=100 or 0>=centers[i][1]-radii[i] or radii[i]+centers[i][1]>=100 for i in range(NUM_CIRC))
 
-    data = []
+    match set_type:
+        case "clean":
+            while(collides or extends): 
+                centers = [(random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)) for _ in range(NUM_CIRC)]
+                radii = [random.randint(*RANGE_RADIUS) for _ in range(NUM_CIRC)]
+                collides = any(any((centers[i][0]-centers[j][0])**2 + (centers[i][1]-centers[j][1])**2 <= (radii[i]+radii[j])**2 for i in range(j+1, NUM_CIRC)) for j in range(NUM_CIRC))
+                extends = any(0>=centers[i][0]-radii[i] or radii[i]+centers[i][0]>=100 or 0>=centers[i][1]-radii[i] or radii[i]+centers[i][1]>=100 for i in range(NUM_CIRC))
+        case "extends":
+            while(collides or not extends):
+                centers = [(random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)) for _ in range(NUM_CIRC)]
+                radii = [random.randint(*RANGE_RADIUS) for _ in range(NUM_CIRC)]
+                collides = any(any((centers[i][0]-centers[j][0])**2 + (centers[i][1]-centers[j][1])**2 <= (radii[i]+radii[j])**2 for i in range(j+1, NUM_CIRC)) for j in range(NUM_CIRC))
+                extends = any(0>centers[i][0]-radii[i] or radii[i]+centers[i][0]>100 or 0>centers[i][1]-radii[i] or radii[i]+centers[i][1]>100 for i in range(NUM_CIRC))
+        case "collission":
+            while(not collides):
+                centers = [(random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)) for _ in range(NUM_CIRC)]
+                radii = [random.randint(*RANGE_RADIUS) for _ in range(NUM_CIRC)]
+                collides = any(any((centers[i][0]-centers[j][0])**2 + (centers[i][1]-centers[j][1])**2 <= (radii[i]+radii[j])**2 for i in range(j+1, NUM_CIRC)) for j in range(NUM_CIRC))
+                extends = any(0>=centers[i][0]-radii[i] or radii[i]+centers[i][0]>=100 or 0>=centers[i][1]-radii[i] or radii[i]+centers[i][1]>=100 for i in range(NUM_CIRC))
+
+    data = [PointsSet(get_circunference_points(random.randint(*RANGE_POINTS), centers[i], radii[i]), centers[i], i+1) for i in range(NUM_CIRC)]
+    '''
     for i in range(NUM_CIRC):
         circ_no = i+1 # 0 will be used for noise
-        center = (random.uniform(0.0, 100.0), random.uniform(0.0, 100.0))
-        rad = random.uniform(*RANGE_RADIUS)
+        center = centers[i]
+        rad = radii[i]
         n = random.randint(*RANGE_POINTS)
+
         points = get_circunference_points(n, center, rad)
         circunference = PointsSet(points, center, circ_no)
         data.append(circunference)
+    '''
     
     # Add noise
     n = int(sum([len(c.points) for c in data]) * (NOISE_RATIO)) # Number of total points so far in the dataset * NOISE_RATIO. This gives us the ammount of noise to include in the dataset
@@ -73,29 +98,41 @@ def get_data():
 # Main function
 
 def generate():
+    global NUM_CIRC, NUM_IMAGES, RANDOMNESS, RANGE_RADIUS, RANGE_POINTS, NOISE_RATIO, RANGE_POINTS, OUTPUT
+    NUM_CIRC = int(nce.get())
     NUM_IMAGES = int(nie.get())
-    
+    RANDOMNESS = float(rde.get())
+    RANGE_RADIUS = (float(rre.get().split(",")[0]), float(rre.get().split(",")[1]))
+    RANGE_POINTS = (int(rpe.get().split(",")[0]), int(rpe.get().split(",")[1]))
+    NOISE_RATIO = float(nre.get())
     OUTPUT = oe.get()
 
-    if not os.path.exists(OUTPUT):
-        os.mkdir(OUTPUT)
-        counter = 1
-    else:
-        # Start counter from the last csv in the directory as to not overwrite previous data
-        counter = sorted([int(x.split(".")[0]) for x in os.listdir(OUTPUT)])[-1]+1
+    dataset_clean = [get_data(set_type="clean") for _ in range(NUM_IMAGES)]
+    dataset_extend = [get_data(set_type="extends") for _ in range(NUM_IMAGES)]
+    dataset_collission = [get_data(set_type="collission") for _ in range(NUM_IMAGES)]
 
-    dataset_list = [get_data() for _ in range(NUM_IMAGES)]
-    for data in dataset_list:
-        data_frame_list = []
-        for points_set in data:
-            data_frame_list.extend(points_set.unpack())
-        
-        plane_pd = pd.DataFrame(data_frame_list,
-                                columns=["point_x", "point_y", "center_x", "center_y", "circ_no"])
+    def save_dataset(dataset, set_type):
+        if not os.path.exists(OUTPUT+f"/{set_type}"):
+            os.makedirs(OUTPUT+f"/{set_type}")
+            counter = 1
+        else:
+            # Start counter from the last csv in the directory as to not overwrite previous data
+            counter = sorted([int(x.split(".")[0]) for x in os.listdir(OUTPUT+f"/{set_type}")])[-1]+1
+        for data in dataset:
+            data_frame_list = []
+            for points_set in data:
+                data_frame_list.extend(points_set.unpack())
+            
+            plane_pd = pd.DataFrame(data_frame_list,
+                                    columns=["point_x", "point_y", "center_x", "center_y", "circ_no"])
 
-        # We save the data in a csv, in the output folder specified, continue to the next circle
-        plane_pd.to_csv(OUTPUT+f"/{counter}.csv", sep=";", index=False)
-        counter += 1
+            # We save the data in a csv, in the output folder specified, continue to the next circle
+            plane_pd.to_csv(OUTPUT+f"/{set_type}/{counter}.csv", sep=";", index=False)
+            counter += 1
+
+    save_dataset(dataset_clean, "clean")
+    save_dataset(dataset_extend, "extends")
+    save_dataset(dataset_collission, "collides")
     
     main_window.destroy()
 
@@ -109,7 +146,7 @@ if __name__=="__main__":
     Label(main_window, text="Nº images").grid(row=0, column=0, sticky='w')
     nih = Label(main_window, text="?", borderwidth=4)
     nih.grid(row=0, column=2)
-    ToolTip(nih, msg="Size of the Dataset")
+    ToolTip(nih, msg="Number of images per type (clean, with extension over the limits and with collission)")
 
     Label(main_window, text="Nª circunferences").grid(row=1, column=0, sticky='w')
     nch = Label(main_window, text="?", borderwidth=4)

@@ -42,9 +42,15 @@ def extract_point_sets(df):
 
 # Main function
 
-def visualize():
+def init_vis():
+    global DATASET_LOCATION
     DATASET_LOCATION = dle.get()
 
+    main_window.destroy()
+    visualize("clean")
+    use('TkAgg')
+
+def visualize(set_type):
     def plot_data(data):
         points = []
         c = []
@@ -72,24 +78,35 @@ def visualize():
         # placing the toolbar on the Tkinter window
         canvas.get_tk_widget().pack()
 
-    main_window.destroy()
-    use('TkAgg')
+    def next_set_type():
+        match set_type:
+            case "clean": visualize_window.destroy(); visualize("extends")
+            case "extends": visualize_window.destroy(); visualize("collides")
+            case _ : exit()
+    
+    def next(i):
+        if i == (len(os.listdir(DATASET_LOCATION+f"/{set_type}"))-1):
+            next_set_type()
+        else: 
+            visualize_window.destroy()
 
-    for filename in os.listdir(DATASET_LOCATION):
+    for i in range(len(os.listdir(DATASET_LOCATION+f"/{set_type}"))):
+        filename = (os.listdir(DATASET_LOCATION+f"/{set_type}")[i])
         visualize_window = Tk()
         visualize_window.resizable(False, False)
-        visualize_window.title(filename)
+        visualize_window.title(f"{set_type} - {filename}")
 
         if filename.endswith(".csv"): 
-            df = pd.read_csv(f"{DATASET_LOCATION}/{filename}",header=0, sep=";")
+            df = pd.read_csv(f"{DATASET_LOCATION}/{set_type}/{filename}",header=0, sep=";")
             data = extract_point_sets(df)
             plot_data(data)
-            Button(visualize_window, text="Next", command=visualize_window.destroy).pack(side=RIGHT, expand=True)
+            Button(visualize_window, text="Next", command= lambda: next(i)).pack(side=RIGHT, expand=True)
+            Button(visualize_window, text="Next Type", command=next_set_type).pack(side=RIGHT, expand=True)
             Button(visualize_window, text="Finish", command=exit).pack(side=LEFT, expand=True)
             visualize_window.mainloop()
 
 
-if __name__=="__main__":
+if __name__=="__main__":    
     main_window = Tk()
     main_window.resizable(False, False)
     main_window.title('Dataset Visualizer')
@@ -103,6 +120,6 @@ if __name__=="__main__":
     dle.insert(0, "./dataset")
     dle.grid(row=6, column=1)
 
-    Button(main_window, text="Visualize", command=visualize).grid(row=7, column=0, columnspan=3)
+    Button(main_window, text="Visualize", command=init_vis).grid(row=7, column=0, columnspan=3)
 
     main_window.mainloop()
