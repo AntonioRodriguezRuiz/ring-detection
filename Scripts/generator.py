@@ -127,6 +127,7 @@ def generate():
     save_dataset(dataset_clean, "clean")
     save_dataset(dataset_extend, "extends")
     if(NUM_CIRC>1): save_dataset(dataset_collission, "collides")
+    main_window.destroy()
 
 if __name__=="__main__":
     main_window = Tk()
