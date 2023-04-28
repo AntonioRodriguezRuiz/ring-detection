@@ -126,7 +126,6 @@ class ResultsVis():
 
 def init_res_vis(results_path):
     global RESULTS
-    print(results_path)
     f = open(f"{results_path}")
     RESULTS = json.load(f)
     res_vis = ResultsVis("clean")
