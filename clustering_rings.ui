@@ -577,7 +577,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Results Output path</string>
+        <string>Results Json path</string>
        </property>
       </widget>
       <widget class="QLineEdit" name="results_input_visuals">
@@ -596,7 +596,7 @@
         <string/>
        </property>
        <property name="placeholderText">
-        <string>./results/2023-04-27 13:47:46.254407</string>
+        <string>./results/results_2023-04-27 13:47:46.254407.json</string>
        </property>
       </widget>
       <widget class="QPushButton" name="vis_results_button">

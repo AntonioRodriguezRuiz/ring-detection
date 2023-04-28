@@ -264,8 +264,8 @@ def create_tables(stats):
 
 # Main loop
 
-def show_accuracy(results_dir):
-    f = open(f"{results_dir}/results.json")
+def show_accuracy(results_path):
+    f = open(f"{results_path}")
     results = json.load(f)
     stats = extract_stats(results)
     create_tables(stats)

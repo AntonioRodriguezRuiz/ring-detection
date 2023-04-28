@@ -143,13 +143,13 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
 
 
     current_moment = datetime.datetime.now()
-    if not os.path.exists(f"{OUTPUT_DIRECTORY}/{current_moment}"):
-                os.makedirs(f"{OUTPUT_DIRECTORY}/{current_moment}")
-    with open(f"{OUTPUT_DIRECTORY}/{current_moment}/results.json", 'w') as outfile:
+    if not os.path.exists(f"{OUTPUT_DIRECTORY}"):
+                os.makedirs(f"{OUTPUT_DIRECTORY}")
+    with open(f"{OUTPUT_DIRECTORY}/results_{current_moment}.json", 'w') as outfile:
         json.dump(results, outfile)
 
     message.destroy()
 
     message = QMessageBox()
-    message.setText("Success!")
+    message.setText(f"Success!\nResults saved in {OUTPUT_DIRECTORY}/results_{current_moment}.json")
     message.exec_()

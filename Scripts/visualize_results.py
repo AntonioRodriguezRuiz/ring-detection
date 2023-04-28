@@ -124,9 +124,10 @@ class ResultsVis():
                 Button(visualize_window, text="Finish", command=finish).pack(side=LEFT, expand=True)
                 visualize_window.mainloop()
 
-def init_res_vis(results_dir):
+def init_res_vis(results_path):
     global RESULTS
-    f = open(f"{results_dir}/results.json")
+    print(results_path)
+    f = open(f"{results_path}")
     RESULTS = json.load(f)
     res_vis = ResultsVis("clean")
     res_vis.visualize("clean")
