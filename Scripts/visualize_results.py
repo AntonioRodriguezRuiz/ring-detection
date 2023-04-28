@@ -66,16 +66,16 @@ def visualize(set_type):
             points.extend(circ["points"])
             
             # We set the color for the set, making sure its different for each set
-            set_color = random.uniform(0, 100)
+            set_color = random.randint(0, 100)
             while(set_color in c):
-                set_color = random.uniform(0, 100)
+                set_color = random.randint(0, 100)
             c.extend([set_color for _ in circ["points"]])
         
         noise = list(*data["noise"])
         points.extend(noise)
-        set_color = random.uniform(0, 100)
+        set_color = random.randint(0, 100)
         while(set_color in c):
-            set_color = random.uniform(0, 100)
+            set_color = random.randint(0, 100)
         c.extend([set_color for _ in noise])
 
         rings = []
