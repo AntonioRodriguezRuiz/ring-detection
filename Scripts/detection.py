@@ -132,6 +132,7 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
                                                 "pairs": pairs, 
                                                 "predicted_centers": predicted_centers, 
                                                 "predicted_radii": [estimate_radii(predicted_centers[p[0]], points, membership_matrix[:, p[0]]) for p in pairs],
+                                                "membership_matrix" : membership_matrix.tolist(),
                                                 "centers_error": centers_error,
                                                 "radii_error": radii_error,
                                                 "tot_error": get_error(centers_error, radii_error)
