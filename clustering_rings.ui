@@ -599,7 +599,7 @@
         <string>./results/2023-04-27 13:47:46.254407</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="vis_results_button">
        <property name="geometry">
         <rect>
          <x>120</x>
@@ -612,7 +612,7 @@
         <string>Visualize Detection</string>
        </property>
       </widget>
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="stats_results_button">
        <property name="geometry">
         <rect>
          <x>120</x>

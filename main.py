@@ -4,6 +4,8 @@ from PyQt5 import uic
 from Scripts.generator import * 
 from Scripts.detection import *
 from Scripts.visualize_dataset import *
+from Scripts.visualize_results import *
+from Scripts.analysis import *
 
 class ClusteringRingsGUI(QMainWindow):
     def __init__(self):
@@ -27,6 +29,8 @@ class ClusteringRingsGUI(QMainWindow):
                                                             self.mem_thress_input.text()))
         
         self.vis_dataset_button.clicked.connect(lambda: init_vis(self.dataset_input_visuals.text()))
+        self.vis_results_button.clicked.connect(lambda: init_res_vis(self.results_input_visuals.text()))
+        self.stats_results_button.clicked.connect(lambda: show_accuracy(self.results_input_visuals.text()))
 
 if __name__=="__main__":
     app = QApplication(sys.argv)

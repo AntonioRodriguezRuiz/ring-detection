@@ -48,98 +48,85 @@ def extract_point_sets(df):
     return data
 
 # Main function
+class ResultsVis():
+    def __init__(self, current_set_type):
+        self.current_set_type = current_set_type
 
-def init_vis():
-    global RESULTS
-    f = open(f"{re.get()}/results.json")
-    RESULTS = json.load(f)
-    use('TkAgg')
-
-    main_window.destroy()
-    visualize("clean")
-
-def visualize(set_type):
-    def plot_data(data):
-        points = []
-        c = []
-        for key, circ in data["circunferences"].items():
-            points.extend(circ["points"])
+    def visualize(self, set_type):
+        def plot_data(data):
+            points = []
+            c = []
+            for key, circ in data["circunferences"].items():
+                points.extend(circ["points"])
+                
+                # We set the color for the set, making sure its different for each set
+                set_color = random.randint(0, 100)
+                while(set_color in c):
+                    set_color = random.randint(0, 100)
+                c.extend([set_color for _ in circ["points"]])
             
-            # We set the color for the set, making sure its different for each set
+            noise = list(*data["noise"])
+            points.extend(noise)
             set_color = random.randint(0, 100)
             while(set_color in c):
                 set_color = random.randint(0, 100)
-            c.extend([set_color for _ in circ["points"]])
+            c.extend([set_color for _ in noise])
+
+            rings = []
+            for det_center_ind, _ in data["pairs"]:
+                points.append(data["predicted_centers"][det_center_ind])
+                rings.append(plt.Circle(data["predicted_centers"][det_center_ind], data["predicted_radii"][det_center_ind], fill=False))
+                c.append(0.0)
+
+            fig = Figure(figsize=(5, 5), dpi=100)
+            ax = fig.add_subplot()
+            ax.scatter(*zip(*points), s=10, c=c)
+            for r in rings:
+                ax.add_artist( r )
+            ax.set(xlim=(0, 100), ylim=(0, 100))
+            ax.set_aspect('equal')
+            
+            canvas = FigureCanvasTkAgg(fig, master=visualize_window)
+            canvas.draw()
+            toolbar = NavigationToolbar2Tk(canvas,
+                                        visualize_window)
+            toolbar.update()
         
-        noise = list(*data["noise"])
-        points.extend(noise)
-        set_color = random.randint(0, 100)
-        while(set_color in c):
-            set_color = random.randint(0, 100)
-        c.extend([set_color for _ in noise])
+            # placing the toolbar on the Tkinter window
+            canvas.get_tk_widget().pack()
 
-        rings = []
-        for det_center_ind, _ in data["pairs"]:
-            points.append(data["predicted_centers"][det_center_ind])
-            rings.append(plt.Circle(data["predicted_centers"][det_center_ind], data["predicted_radii"][det_center_ind], fill=False))
-            c.append(0.0)
-
-        fig = Figure(figsize=(5, 5), dpi=100)
-        ax = fig.add_subplot()
-        ax.scatter(*zip(*points), s=10, c=c)
-        for r in rings:
-            ax.add_artist( r )
-        ax.set(xlim=(0, 100), ylim=(0, 100))
-        ax.set_aspect('equal')
+        def next_set_type():
+            match set_type:
+                case "clean": visualize_window.destroy(); self.current_set_type="extends"; self.visualize("extends")
+                case "extends": visualize_window.destroy(); self.current_set_type="collides"; self.visualize("collides")
+                case _ : visualize_window.destroy(); self.current_set_type = None
         
-        canvas = FigureCanvasTkAgg(fig, master=visualize_window)
-        canvas.draw()
-        toolbar = NavigationToolbar2Tk(canvas,
-                                    visualize_window)
-        toolbar.update()
-    
-        # placing the toolbar on the Tkinter window
-        canvas.get_tk_widget().pack()
-
-    def next_set_type():
-        match set_type:
-            case "clean": visualize_window.destroy(); visualize("extends")
-            case "extends": visualize_window.destroy(); visualize("collides")
-            case _ : exit()
-    
-    def next(filename):
-        if filename == list(RESULTS[set_type].keys())[-1]:
-            next_set_type()
-        else: 
+        def next(filename):
+            if filename == list(RESULTS[set_type].keys())[-1]:
+                next_set_type()
+            else: 
+                visualize_window.destroy()
+        
+        def finish():
             visualize_window.destroy()
+            self.current_set_type = None
 
-    for filename in RESULTS[set_type].keys():
-        visualize_window = Tk()
-        visualize_window.resizable(False, False)
-        visualize_window.title(f"{set_type} - {filename}")
+        for filename in RESULTS[set_type].keys():
+            if(self.current_set_type==set_type):
+                visualize_window = Tk()
+                visualize_window.resizable(False, False)
+                visualize_window.title(f"{set_type} - {filename}")
 
-        plot_data(RESULTS[set_type][filename])
+                plot_data(RESULTS[set_type][filename])
 
-        Button(visualize_window, text="Next", command= lambda: next(filename)).pack(side=RIGHT, expand=True)
-        Button(visualize_window, text="Next Type", command=next_set_type).pack(side=RIGHT, expand=True)
-        Button(visualize_window, text="Finish", command=exit).pack(side=LEFT, expand=True)
-        visualize_window.mainloop()
+                Button(visualize_window, text="Next", command= lambda: next(filename)).pack(side=RIGHT, expand=True)
+                Button(visualize_window, text="Next Type", command=next_set_type).pack(side=RIGHT, expand=True)
+                Button(visualize_window, text="Finish", command=finish).pack(side=LEFT, expand=True)
+                visualize_window.mainloop()
 
-
-if __name__=="__main__":    
-    main_window = Tk()
-    main_window.resizable(False, False)
-    main_window.title('Dataset Visualizer')
-
-    Label(main_window, text="Results Dir").grid(row=6, column=0, sticky='w')
-    dlh = Label(main_window, text="?", borderwidth=4)
-    dlh.grid(row=6, column=2)
-    ToolTip(dlh, msg="Results directory (relative path)")
-
-    re = Entry(main_window, width=20, selectborderwidth=5)
-    re.insert(0, "./results/2023-04-27 17:02:01.642699")
-    re.grid(row=6, column=1)
-
-    Button(main_window, text="Visualize", command=init_vis).grid(row=7, column=0, columnspan=3)
-
-    main_window.mainloop()
+def init_res_vis(results_dir):
+    global RESULTS
+    f = open(f"{results_dir}/results.json")
+    RESULTS = json.load(f)
+    res_vis = ResultsVis("clean")
+    res_vis.visualize("clean")
