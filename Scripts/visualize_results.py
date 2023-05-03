@@ -10,6 +10,7 @@ from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
     NavigationToolbar2Tk
 )
+from PyQt5.QtWidgets import *
 
 class PointsSet:
     def __init__(self, points, center, radius, circ_no):
@@ -126,6 +127,13 @@ class ResultsVis():
 
 def init_res_vis(results_path):
     global RESULTS
+
+    if not os.path.isfile(f"{results_path}"):
+        message = QMessageBox()
+        message.setText(f"The provided file does not exist:\n{results_path}")
+        message.exec_()
+        return None
+
     f = open(f"{results_path}")
     RESULTS = json.load(f)
     res_vis = ResultsVis("clean")

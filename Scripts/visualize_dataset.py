@@ -73,25 +73,33 @@ class DataSetVis():
             visualize_window.destroy()
             self.current_set_type = None
 
-        for i in range(len(os.listdir(DATASET_LOCATION+f"/{set_type}"))):
-            if(self.current_set_type==set_type):
-                filename = (os.listdir(DATASET_LOCATION+f"/{set_type}")[i])
-                visualize_window = Tk()
-                visualize_window.resizable(False, False)
-                visualize_window.title(f"{set_type} - {filename}")
+        if os.path.exists(DATASET_LOCATION+f"/{set_type}") or len(os.listdir(DATASET_LOCATION+f"/{set_type}")) > 0:
+            for i in range(len(os.listdir(DATASET_LOCATION+f"/{set_type}"))):
+                if(self.current_set_type==set_type):
+                    filename = (os.listdir(DATASET_LOCATION+f"/{set_type}")[i])
+                    visualize_window = Tk()
+                    visualize_window.resizable(False, False)
+                    visualize_window.title(f"{set_type} - {filename}")
 
-                if filename.endswith(".csv"): 
-                    df = pd.read_csv(f"{DATASET_LOCATION}/{set_type}/{filename}",header=0, sep=";")
-                    data = extract_point_sets(df)
-                    plot_data(data)
-                    Button(visualize_window, text="Next", command= lambda: next(i)).pack(side=RIGHT, expand=True)
-                    Button(visualize_window, text="Next Type", command=next_set_type).pack(side=RIGHT, expand=True)
-                    Button(visualize_window, text="Finish", command=finish).pack(side=LEFT, expand=True)
-                    visualize_window.mainloop()
+                    if filename.endswith(".csv"): 
+                        df = pd.read_csv(f"{DATASET_LOCATION}/{set_type}/{filename}",header=0, sep=";")
+                        data = extract_point_sets(df)
+                        plot_data(data)
+                        Button(visualize_window, text="Next", command= lambda: next(i)).pack(side=RIGHT, expand=True)
+                        Button(visualize_window, text="Next Type", command=next_set_type).pack(side=RIGHT, expand=True)
+                        Button(visualize_window, text="Finish", command=finish).pack(side=LEFT, expand=True)
+                        visualize_window.mainloop()
+        else:
+            next_set_type()
 
 def init_vis(dataset_dir):
     global DATASET_LOCATION
     DATASET_LOCATION = dataset_dir
+    if not os.path.exists(DATASET_LOCATION) or len(os.listdir(DATASET_LOCATION)) == 0:
+        message = QMessageBox()
+        message.setText(f"The provided dataset does not exist or its empty:\n{DATASET_LOCATION}")
+        message.exec_()
+        return None
 
     data_vis = DataSetVis("clean")
     data_vis.visualize("clean")
