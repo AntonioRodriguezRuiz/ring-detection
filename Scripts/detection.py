@@ -32,13 +32,21 @@ def alg_iteration(centers, points, m):
     n_clusters = len(centers)
     n_points = len(points)
     membership_matrix = np.zeros((n_points, n_clusters))
+
+    np_centers = np.array(centers)
+    np_points = np.array(points)
     
-    # compute the membership degree of each point to each cluster
-    for i in range(n_points):
-        for j in range(n_clusters):
-            distance = np.sqrt((centers[j][0]-points[i][0])**2 + (centers[j][1]-points[i][1])**2)
-            membership_matrix[i][j] = 1 / ((sum([(distance/np.sqrt((centers[k][0]-points[i][0])**2 + (centers[k][1]-points[i][1])**2))**(fuzziness) for k in range(n_clusters)])))
-    
+    # Legacy Loop
+    #for i in range(n_points):
+    #    for j in range(n_clusters):
+    #        distance = np.sqrt((centers[j][0]-points[i][0])**2 + (centers[j][1]-points[i][1])**2)
+    #        membership_matrix[i][j] = 1 / ((sum([(distance/np.sqrt((centers[k][0]-points[i][0])**2 + (centers[k][1]-points[i][1])**2))**(fuzziness) for k in range(n_clusters)])))
+
+    # Optimized calcuation
+    distances = np.sqrt(np.sum((np_centers[:, np.newaxis, :] - np_points)**2, axis=2))
+    distances = distances.T
+    membership_matrix = 1 / ((distances[:, :, np.newaxis]/distances[:, np.newaxis, :]) ** (fuzziness)).sum(axis=2)
+
     # update the cluster centroids based on the membership degrees
     new_centers = [(0,0) for _ in range(n_clusters)]
     for j in range(n_clusters):
@@ -47,11 +55,12 @@ def alg_iteration(centers, points, m):
 
 def alg_perform(k, points):
     old_centers = [(random.uniform(0.0, 100.0), random.uniform(0.0, 100.0)) for _ in range(k)]
-    new_centers, membership_matrix = alg_iteration(old_centers, points, random.uniform(*FUZZINESS_RANGE))
+    fuzziness = random.uniform(*FUZZINESS_RANGE)
+    new_centers, membership_matrix = alg_iteration(old_centers, points, fuzziness)
     count = 1
     while(count<=MAX_ITERATIONS and old_centers!=new_centers):
         old_centers = new_centers
-        new_centers, membership_matrix = alg_iteration(old_centers, points, random.uniform(*FUZZINESS_RANGE))
+        new_centers, membership_matrix = alg_iteration(old_centers, points, fuzziness)
         count +=1
     return new_centers, membership_matrix
 
@@ -80,7 +89,7 @@ def get_radii_error(pairs, centers, rings, points, membership_matrix):
     return np.mean([abs(estimate_radii(centers[p[0]], points, membership_matrix[:, p[0]]) - rings[p[1]].radius)/rings[p[1]].radius for p in pairs])
 
 def get_error(centers_error, radii_error):
-    return centers_error * 0.9 + radii_error * 0.1
+    return centers_error * 0.8 + radii_error * 0.2
 
 def get_total_error(centers, rings, points, membership_matrix):
     pairs = find_pairs(centers, [r.center for r in rings])
@@ -104,7 +113,6 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
     message.exec_()
 
     for set_type in ["clean", "extends", "collides"]:
-        
         results[set_type] = {}
 
         for filename in tqdm(os.listdir(f"{DATASET_LOCATION}/{set_type}"), desc=f"Predicting clouds of type {set_type}", leave=True):
@@ -137,10 +145,6 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
                                                 "radii_error": radii_error,
                                                 "tot_error": get_error(centers_error, radii_error)
                                                 }
-
-            #pbar_set_type.setValue(np.round(((i+1)/len(os.listdir(f"{DATASET_LOCATION}/{set_type}"))*100)))
-
-
 
     current_moment = datetime.datetime.now()
     if not os.path.exists(f"{OUTPUT_DIRECTORY}"):
