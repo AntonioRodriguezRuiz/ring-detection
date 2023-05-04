@@ -50,7 +50,7 @@ def alg_iteration(centers, points, m):
     # update the cluster centroids based on the membership degrees
     new_centers = [(0,0) for _ in range(n_clusters)]
     for j in range(n_clusters):
-        new_centers[j] = tuple(np.average(points, axis=0, weights=membership_matrix[:, j]))
+        new_centers[j] = tuple(np.average(points, axis=0, weights=membership_matrix[:, j]**m))
     return new_centers, membership_matrix
 
 def alg_perform(k, points):
