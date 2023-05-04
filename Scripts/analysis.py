@@ -74,7 +74,7 @@ def get_collission_type_stats(results):
     collission_type_stats["overlaps"]["avg_center_error_overlaps"] = np.mean(avg_center_error_overlaps_ls)
     collission_type_stats["overlaps"]["avg_radius_error_overlaps"] = np.mean(avg_radius_error_overlaps_ls)
 
-    collission_type_stats["contains"]["avg_error_contains"] = np.mean(avg_error_overlaps_ls)
+    collission_type_stats["contains"]["avg_error_contains"] = np.mean(avg_error_contains_ls)
     collission_type_stats["contains"]["avg_center_error_contains"] = np.mean(avg_center_error_contains_ls)
     collission_type_stats["contains"]["avg_radius_error_contains"] = np.mean(avg_radius_error_contains_ls)
 
@@ -220,8 +220,8 @@ def create_tables(stats):
 
     data = [    
         {'title':"Total Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_error"])*100, decimals=2))+"%"},
-        {'title':"Radius Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_radius_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_center_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_radii_error"])*100, decimals=2))+"%"},
-        {'title':"Center Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_center_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_radius_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_center_error"])*100, decimals=2))+"%"}
+        {'title':"Radius Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_radius_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_radius_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_radii_error"])*100, decimals=2))+"%"},
+        {'title':"Center Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_center_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_center_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_center_error"])*100, decimals=2))+"%"}
     ]
 
     for row in range(rows):
