@@ -1,8 +1,9 @@
-import json
+import json, os
 import numpy as np
 from tkinter import *
 from tktooltip import ToolTip
 from matplotlib.figure import Figure
+from PyQt5.QtWidgets import *
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
     NavigationToolbar2Tk
