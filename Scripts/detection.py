@@ -93,7 +93,7 @@ def get_error(centers_error, radii_error):
 
 def get_total_error(centers, rings, points, membership_matrix):
     pairs = find_pairs(centers, [r.center for r in rings])
-    return get_centers_error(pairs, centers, rings)*0.9 + get_radii_error(pairs, centers, rings, points, membership_matrix)*0.1
+    return get_centers_error(pairs, centers, rings)*0.8 + get_radii_error(pairs, centers, rings, points, membership_matrix)*0.2
 
 ## MAIN LOOP
 
