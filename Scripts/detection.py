@@ -99,12 +99,18 @@ def get_total_error(centers, rings, points, membership_matrix):
 
 def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, membeership_thress):
     global DATASESET_LOCATION, OUTPUT_DIRECTORY, FUZZINESS_RANGE, ATTEMPTS, MAX_ITERATIONS, MEMBERSHIP_THRESSHOLD
-    DATASET_LOCATION = dataset_location
-    OUTPUT_DIRECTORY = output_dir
-    FUZZINESS_RANGE = (float(fuzziness_range.split(",")[0]), float(fuzziness_range.split(",")[1]))
-    ATTEMPTS = int(attempts)
-    MAX_ITERATIONS = int(max_iter)
-    MEMBERSHIP_THRESSHOLD = float(membeership_thress)
+    try:
+        DATASET_LOCATION = dataset_location
+        OUTPUT_DIRECTORY = output_dir
+        FUZZINESS_RANGE = (float(fuzziness_range.split(",")[0]), float(fuzziness_range.split(",")[1]))
+        ATTEMPTS = int(attempts)
+        MAX_ITERATIONS = int(max_iter)
+        MEMBERSHIP_THRESSHOLD = float(membeership_thress)
+    except Exception as e:
+        message = QMessageBox()
+        message.setText(f"Some input was invalid:\n{e}")
+        message.exec_()
+        return None
     
     results = {}
 

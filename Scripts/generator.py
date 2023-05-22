@@ -65,13 +65,19 @@ def get_data(set_type):
 
 def generate(num_circ, num_images, randomness, range_radius, range_points, noise_ratio, output):
     global NUM_CIRC, NUM_IMAGES, RANDOMNESS, RANGE_RADIUS, RANGE_POINTS, NOISE_RATIO, OUTPUT
-    NUM_CIRC = int(num_circ)
-    NUM_IMAGES = int(num_images)
-    RANDOMNESS = float(randomness)
-    RANGE_RADIUS = (float(range_radius.split(",")[0]), float(range_radius.split(",")[1]))
-    RANGE_POINTS = (int(range_points.split(",")[0]), int(range_points.split(",")[1]))
-    NOISE_RATIO = float(noise_ratio)
-    OUTPUT = output
+    try:
+        NUM_CIRC = int(num_circ)
+        NUM_IMAGES = int(num_images)
+        RANDOMNESS = float(randomness)
+        RANGE_RADIUS = (float(range_radius.split(",")[0]), float(range_radius.split(",")[1]))
+        RANGE_POINTS = (int(range_points.split(",")[0]), int(range_points.split(",")[1]))
+        NOISE_RATIO = float(noise_ratio)
+        OUTPUT = output
+    except Exception as e:
+        message = QMessageBox()
+        message.setText(f"Some input was invalid:\n{e}")
+        message.exec_()
+        return None
 
     dataset_clean = [get_data(set_type="clean") for _ in range(NUM_IMAGES)]
     dataset_extend = [get_data(set_type="extends") for _ in range(NUM_IMAGES)]

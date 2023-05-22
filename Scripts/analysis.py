@@ -265,6 +265,11 @@ def create_tables(stats):
 # Main loop
 
 def show_accuracy(results_path):
+    if not os.path.isfile(f"{results_path}"):
+        message = QMessageBox()
+        message.setText(f"The provided file does not exist:\n{results_path}")
+        message.exec_()
+        return None
     f = open(f"{results_path}")
     results = json.load(f)
     stats = extract_stats(results)
