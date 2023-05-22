@@ -1,7 +1,5 @@
 import random, os
 import pandas as pd
-import tkinter.ttk as ttk
-import numpy as np
 from math import pi, cos, sin, sqrt
 from PyQt5.QtWidgets import *
 from Scripts.utils import PointsSet

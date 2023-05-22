@@ -1,16 +1,13 @@
 import math, random, os, json
-import pandas as pd
 import matplotlib.pyplot as plt
-import tkinter.ttk as ttk
 from tkinter import *
-from tktooltip import ToolTip
+from PyQt5.QtWidgets import *
 from matplotlib import *
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg,
     NavigationToolbar2Tk
 )
-from PyQt5.QtWidgets import *
 
 class PointsSet:
     def __init__(self, points, center, radius, circ_no):
