@@ -138,7 +138,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Number Of Instances</string>
+       <string>No. of Instances</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_2">
@@ -151,7 +151,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Number Of Circumferences</string>
+       <string>No. of Circumferences</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_3">
@@ -416,7 +416,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Membership thresshold</string>
+       <string>Membership threshold</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="mem_thress_input">

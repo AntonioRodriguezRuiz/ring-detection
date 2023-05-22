@@ -46,8 +46,8 @@ def get_extension_perc_stats(results):
 
     return extension_perc_stats
 
-def get_collission_type_stats(results):
-    collission_type_stats = {"overlaps": {}, "contains": {}}
+def get_collision_type_stats(results):
+    collision_type_stats = {"overlaps": {}, "contains": {}}
 
     avg_error_overlaps_ls = []
     avg_center_error_overlaps_ls = []
@@ -70,15 +70,15 @@ def get_collission_type_stats(results):
             avg_center_error_overlaps_ls.append(results["collides"][filename]["centers_error"])
             avg_radius_error_overlaps_ls.append(results["collides"][filename]["radii_error"])
             
-    collission_type_stats["overlaps"]["avg_error_overlaps"] = np.mean(avg_error_overlaps_ls)
-    collission_type_stats["overlaps"]["avg_center_error_overlaps"] = np.mean(avg_center_error_overlaps_ls)
-    collission_type_stats["overlaps"]["avg_radius_error_overlaps"] = np.mean(avg_radius_error_overlaps_ls)
+    collision_type_stats["overlaps"]["avg_error_overlaps"] = np.mean(avg_error_overlaps_ls)
+    collision_type_stats["overlaps"]["avg_center_error_overlaps"] = np.mean(avg_center_error_overlaps_ls)
+    collision_type_stats["overlaps"]["avg_radius_error_overlaps"] = np.mean(avg_radius_error_overlaps_ls)
 
-    collission_type_stats["contains"]["avg_error_contains"] = np.mean(avg_error_contains_ls)
-    collission_type_stats["contains"]["avg_center_error_contains"] = np.mean(avg_center_error_contains_ls)
-    collission_type_stats["contains"]["avg_radius_error_contains"] = np.mean(avg_radius_error_contains_ls)
+    collision_type_stats["contains"]["avg_error_contains"] = np.mean(avg_error_contains_ls)
+    collision_type_stats["contains"]["avg_center_error_contains"] = np.mean(avg_center_error_contains_ls)
+    collision_type_stats["contains"]["avg_radius_error_contains"] = np.mean(avg_radius_error_contains_ls)
 
-    return collission_type_stats
+    return collision_type_stats
 
 def extract_stats(results):
     stats = {}
@@ -94,7 +94,7 @@ def extract_stats(results):
 
         match set_type:
             case "extends": stats[set_type]["25%"] = get_extension_perc_stats(results)
-            case "collides": stats[set_type]["collission_type"] = get_collission_type_stats(results)
+            case "collides": stats[set_type]["collision_type"] = get_collision_type_stats(results)
 
         for filename in results[set_type].keys():
             tot_avg_error_ls.append(results[set_type][filename]["tot_error"])
@@ -219,9 +219,9 @@ def create_tables(stats):
     ax3.set_xlim(0.1, cols + .9)
 
     data = [    
-        {'title':"Total Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_error"])*100, decimals=2))+"%"},
-        {'title':"Radius Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_radius_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_radius_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_radii_error"])*100, decimals=2))+"%"},
-        {'title':"Center Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collission_type"]["overlaps"]["avg_center_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collission_type"]["contains"]["avg_center_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_center_error"])*100, decimals=2))+"%"}
+        {'title':"Total Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collision_type"]["overlaps"]["avg_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collision_type"]["contains"]["avg_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_error"])*100, decimals=2))+"%"},
+        {'title':"Radius Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collision_type"]["overlaps"]["avg_radius_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collision_type"]["contains"]["avg_radius_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_radii_error"])*100, decimals=2))+"%"},
+        {'title':"Center Accuracy", 'avg_overlapping_error': str(np.around((1-stats["collides"]["collision_type"]["overlaps"]["avg_center_error_overlaps"])*100, decimals=2))+"%", 'avg_containing_error': str(np.around((1-stats["collides"]["collision_type"]["contains"]["avg_center_error_contains"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["collides"]["avg_center_error"])*100, decimals=2))+"%"}
     ]
 
     for row in range(rows):
@@ -244,7 +244,7 @@ def create_tables(stats):
     ax3.plot([-1, cols + 1], [0.65, 0.65], lw='.5', c='black')
     ax3.axis('off')
     ax3.set_title(
-        'Accuracy based on Collission type',
+        'Accuracy based on Collision type',
         loc='left',
         fontsize=18,
         weight='bold'
