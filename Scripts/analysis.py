@@ -23,11 +23,11 @@ def get_extension_perc_stats(results):
     avg_radius_error_under_25_ls = []
 
     for filename in results["extends"].keys():
-        if any(results["extends"][filename]["circunferences"][str(circ_no+1)]["center"][0] < results["extends"][filename]["circunferences"][str(circ_no+1)]["radius"]/2 or
-               100 - results["extends"][filename]["circunferences"][str(circ_no+1)]["center"][0] < results["extends"][filename]["circunferences"][str(circ_no+1)]["radius"]/2  or
-               results["extends"][filename]["circunferences"][str(circ_no+1)]["center"][1] < results["extends"][filename]["circunferences"][str(circ_no+1)]["radius"]/2  or
-               100 -results["extends"][filename]["circunferences"][str(circ_no+1)]["center"][1] < results["extends"][filename]["circunferences"][str(circ_no+1)]["radius"]/2 
-                for circ_no in range(results["extends"][filename]["circs_num"])):
+        if any(circ["center"][0] < circ["radius"]/2 or
+               100 - circ["center"][0] < circ["radius"]/2  or
+               circ["center"][1] < circ["radius"]/2  or
+               100 -circ["center"][1] < circ["radius"]/2 
+                for _, circ in results["extends"][filename]["circunferences"].items()):
             avg_error_over_25_ls.append(results["extends"][filename]["tot_error"])
             avg_center_error_over_25_ls.append(results["extends"][filename]["centers_error"])
             avg_radius_error_over_25_ls.append(results["extends"][filename]["radii_error"])
@@ -153,9 +153,9 @@ def create_tables(stats):
         ax1.text(x=5.85, y=row/4, s=d['tot_avg_error'], va='center', ha='right')
 
         ax1.text(1.25, 0.7, 'Error Type', weight='bold', va='center', ha='right')
-        ax1.text(2.45, 0.7, 'Clean Sets', weight='bold', va='center', ha='right')
-        ax1.text(3.65, 0.7, 'Extend Sets', weight='bold', va='center', ha='right')
-        ax1.text(4.75, 0.7, 'Collide Sets', weight='bold', va='center', ha='right')
+        ax1.text(2.45, 0.7, 'Clean', weight='bold', va='center', ha='right')
+        ax1.text(3.65, 0.7, 'Extend', weight='bold', va='center', ha='right')
+        ax1.text(4.75, 0.7, 'Collide', weight='bold', va='center', ha='right')
         ax1.text(5.85, 0.7, 'Total', weight='bold', va='center', ha='right')
     for row in range(rows):
         ax1.plot(
@@ -180,22 +180,22 @@ def create_tables(stats):
     ax2.set_xlim(0.1, cols + .9)
 
     data = [    
-        {'title':"Total Accuracy", 'avg_<25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_error"])*100, decimals=2))+"%"},
-        {'title':"Radius Accuracy", 'avg_<25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_radius_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_radius_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_radii_error"])*100, decimals=2))+"%"},
-        {'title':"Center Accuracy", 'avg_<25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_center_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_center_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_center_error"])*100, decimals=2))+"%"}
+        {'title':"Total Accuracy", 'avg_<=25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_error"])*100, decimals=2))+"%"},
+        {'title':"Radius Accuracy", 'avg_<=25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_radius_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_radius_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_radii_error"])*100, decimals=2))+"%"},
+        {'title':"Center Accuracy", 'avg_<=25_error': str(np.around((1-stats["extends"]["25%"]["under"]["avg_center_error_under_25"])*100, decimals=2))+"%", 'avg_>25_error': str(np.around((1-stats["extends"]["25%"]["over"]["avg_center_error_over_25"])*100, decimals=2))+"%", 'tot_avg_error': str(np.around((1-stats["extends"]["avg_center_error"])*100, decimals=2))+"%"}
     ]
 
     for row in range(rows):
         d = data[row]
 
         ax2.text(x=1.25, y=row/4, s=d['title'], va='center', ha='right', weight='bold')
-        ax2.text(x=2.45, y=row/4, s=d['avg_<25_error'], va='center', ha='right')
+        ax2.text(x=2.45, y=row/4, s=d['avg_<=25_error'], va='center', ha='right')
         ax2.text(x=3.65, y=row/4, s=d['avg_>25_error'], va='center', ha='right')
         ax2.text(x=4.75, y=row/4, s=d['tot_avg_error'], va='center', ha='right')
 
         ax2.text(1.25, 0.7, 'Error Type', weight='bold', va='center', ha='right')
-        ax2.text(2.45, 0.7, "<25% out Sets", weight='bold', va='center', ha='right')
-        ax2.text(3.65, 0.7, ">25% out Sets", weight='bold', va='center', ha='right')
+        ax2.text(2.45, 0.7, "<=25% out", weight='bold', va='center', ha='right')
+        ax2.text(3.65, 0.7, ">25% out", weight='bold', va='center', ha='right')
         ax2.text(4.75, 0.7, 'Total', weight='bold', va='center', ha='right')
     for row in range(rows):
         ax2.plot(
