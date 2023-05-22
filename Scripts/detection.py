@@ -1,4 +1,4 @@
-import math, random, os, datetime, json
+import math, random, os, datetime, json, timeit
 import numpy as np
 import pandas as pd
 from scipy.optimize import linear_sum_assignment
@@ -118,6 +118,8 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
     message.setText("Progress can be seen in terminal output")
     message.exec_()
 
+    start = timeit.default_timer()
+
     for set_type in ["clean", "extends", "collides"]:
         results[set_type] = {}
 
@@ -161,5 +163,5 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
     message.destroy()
 
     message = QMessageBox()
-    message.setText(f"Success!\nResults saved in {OUTPUT_DIRECTORY}/results_{current_moment}.json")
+    message.setText(f"Success!\nResults saved in {OUTPUT_DIRECTORY}/results_{current_moment}.json\nTook {(timeit.default_timer()-start):.2f} seconds")
     message.exec_()
