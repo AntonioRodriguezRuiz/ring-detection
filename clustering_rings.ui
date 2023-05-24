@@ -296,7 +296,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>Wether the number of circs, centers and radii are included</string>
+       <string>Whether the number of circs, centers and radii are included</string>
       </property>
       <property name="text">
        <string/>
@@ -541,7 +541,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>Wether the number of circs, centers and radii are included (Neglects previous input)</string>
+       <string>Whether the number of circs, centers and radii are included (Neglects previous input)</string>
       </property>
       <property name="text">
        <string/>
@@ -657,7 +657,7 @@
         </rect>
        </property>
        <property name="toolTip">
-        <string>Wether the number of circs, centers and radii are included</string>
+        <string>Whether the number of circs, centers and radii are included</string>
        </property>
        <property name="text">
         <string/>
@@ -776,7 +776,7 @@
         </rect>
        </property>
        <property name="toolTip">
-        <string>Wether the number of circs, centers and radii are included</string>
+        <string>Whether the number of circs, centers and radii are included</string>
        </property>
        <property name="text">
         <string/>

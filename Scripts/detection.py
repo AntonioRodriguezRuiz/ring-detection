@@ -109,11 +109,11 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
         DATASET_LOCATION = dataset_location
         OUTPUT_DIRECTORY = output_dir
         FUZZINESS_RANGE = (float(fuzziness_range.split(",")[0]), float(fuzziness_range.split(",")[1]))
-        ATTEMPTS = int(attempts)
+        ATTEMPTS = int(attempts) if data_known else None
         MAX_ITERATIONS = int(max_iter)
         MEMBERSHIP_THRESSHOLD = float(membeership_thress)
         DATA_KNOWN = data_known
-        NUM_CIRCLES = int(num_circ)
+        NUM_CIRCLES = int(num_circ) if not data_known else None
     except Exception as e:
         message = QMessageBox()
         message.setText(f"Some input was invalid:\n{e}")
