@@ -264,7 +264,12 @@ def create_tables(stats):
 
 # Main loop
 
-def show_accuracy(results_path):
+def show_accuracy(results_path, known_data):
+    if not bool(known_data):
+        message = QMessageBox()
+        message.setText(f"These results cannot be analyzed")
+        message.exec_()
+        return None
     if not os.path.isfile(f"{results_path}"):
         message = QMessageBox()
         message.setText(f"The provided file does not exist:\n{results_path}")

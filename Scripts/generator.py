@@ -61,7 +61,7 @@ def get_data(set_type):
 
 # Main function
 
-def generate(num_circ, num_images, randomness, range_radius, range_points, noise_ratio, output):
+def generate(num_circ, num_images, randomness, range_radius, range_points, noise_ratio, output, known_data):
     global NUM_CIRC, NUM_IMAGES, RANDOMNESS, RANGE_RADIUS, RANGE_POINTS, NOISE_RATIO, OUTPUT, KNOWN_DATA
     try:
         NUM_CIRC = int(num_circ)
@@ -71,7 +71,7 @@ def generate(num_circ, num_images, randomness, range_radius, range_points, noise
         RANGE_POINTS = (int(range_points.split(",")[0]), int(range_points.split(",")[1]))
         NOISE_RATIO = float(noise_ratio)
         OUTPUT = output
-        KNOWN_DATA = False # TODO CHANGE WITH INPUT
+        KNOWN_DATA = known_data
     except Exception as e:
         message = QMessageBox()
         message.setText(f"Some input was invalid:\n{e}")

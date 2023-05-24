@@ -19,18 +19,22 @@ class ClusteringRingsGUI(QMainWindow):
                                                               self.range_radius_input.text().strip(),
                                                               self.range_points_input.text().strip(),
                                                               self.noise_ratio_input.text().strip(),
-                                                              self.dataset_input_generation.text().strip()))
-
+                                                              self.dataset_input_generation.text().strip(),
+                                                              self.known_input_generation.isChecked()))
         self.detect_button.clicked.connect(lambda: detect(self.dataset_input_detection.text().strip(), 
                                                             self.results_input_detection.text().strip(),
                                                             self.fuzziness_input.text().strip(),
                                                             self.attempts_input.text().strip(),
                                                             self.max_iter_input.text().strip(),
-                                                            self.mem_thress_input.text().strip()))
+                                                            self.mem_thress_input.text().strip(),
+                                                            self.known_input_detection.isChecked()))
         
-        self.vis_dataset_button.clicked.connect(lambda: init_vis(self.dataset_input_visuals.text().strip()))
-        self.vis_results_button.clicked.connect(lambda: init_res_vis(self.results_input_visuals.text().strip()))
-        self.stats_results_button.clicked.connect(lambda: show_accuracy(self.results_input_visuals.text().strip()))
+        self.vis_dataset_button.clicked.connect(lambda: init_vis(self.dataset_input_visuals.text().strip(),
+                                                            self.known_input_visuals_dat.isChecked()))
+        self.vis_results_button.clicked.connect(lambda: init_res_vis(self.results_input_visuals.text().strip(),
+                                                            self.known_input_visuals_res.isChecked()))
+        self.stats_results_button.clicked.connect(lambda: show_accuracy(self.results_input_visuals.text().strip(),
+                                                            self.known_input_visuals_res.isChecked()))
 
 if __name__=="__main__":
     app = QApplication(sys.argv)

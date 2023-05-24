@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>444</width>
-    <height>444</height>
+    <width>447</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,11 +20,11 @@
       <x>20</x>
       <y>20</y>
       <width>401</width>
-      <height>391</height>
+      <height>431</height>
      </rect>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <widget class="QWidget" name="generation_tab">
      <attribute name="title">
@@ -264,13 +264,42 @@
       <property name="geometry">
        <rect>
         <x>150</x>
-        <y>310</y>
+        <y>350</y>
         <width>85</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>Generate</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_17">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>300</y>
+        <width>221</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Include real data</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="known_input_generation">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>300</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -477,13 +506,42 @@
       <property name="geometry">
        <rect>
         <x>140</x>
-        <y>300</y>
+        <y>340</y>
         <width>101</width>
         <height>31</height>
        </rect>
       </property>
       <property name="text">
        <string>Run Detection</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_18">
+      <property name="geometry">
+       <rect>
+        <x>30</x>
+        <y>280</y>
+        <width>221</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Included real data</string>
+      </property>
+     </widget>
+     <widget class="QCheckBox" name="known_input_detection">
+      <property name="geometry">
+       <rect>
+        <x>250</x>
+        <y>280</y>
+        <width>41</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -497,7 +555,7 @@
         <x>2</x>
         <y>1</y>
         <width>393</width>
-        <height>141</height>
+        <height>181</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -542,7 +600,7 @@
        <property name="geometry">
         <rect>
          <x>120</x>
-         <y>90</y>
+         <y>130</y>
          <width>131</width>
          <height>31</height>
         </rect>
@@ -551,14 +609,43 @@
         <string>Visualize instances</string>
        </property>
       </widget>
+      <widget class="QCheckBox" name="known_input_visuals_dat">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>70</y>
+         <width>41</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_20">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>70</y>
+         <width>131</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Included real data</string>
+       </property>
+      </widget>
      </widget>
      <widget class="QFrame" name="frame_3">
       <property name="geometry">
        <rect>
         <x>2</x>
-        <y>144</y>
+        <y>184</y>
         <width>393</width>
-        <height>212</height>
+        <height>211</height>
        </rect>
       </property>
       <property name="frameShape">
@@ -571,7 +658,7 @@
        <property name="geometry">
         <rect>
          <x>50</x>
-         <y>40</y>
+         <y>20</y>
          <width>221</width>
          <height>31</height>
         </rect>
@@ -584,7 +671,7 @@
        <property name="geometry">
         <rect>
          <x>212</x>
-         <y>40</y>
+         <y>20</y>
          <width>151</width>
          <height>29</height>
         </rect>
@@ -603,7 +690,7 @@
        <property name="geometry">
         <rect>
          <x>120</x>
-         <y>90</y>
+         <y>110</y>
          <width>131</width>
          <height>31</height>
         </rect>
@@ -616,13 +703,42 @@
        <property name="geometry">
         <rect>
          <x>120</x>
-         <y>150</y>
+         <y>160</y>
          <width>131</width>
          <height>31</height>
         </rect>
        </property>
        <property name="text">
         <string>Visualize Statistics</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_19">
+       <property name="geometry">
+        <rect>
+         <x>50</x>
+         <y>60</y>
+         <width>221</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Included real data</string>
+       </property>
+      </widget>
+      <widget class="QCheckBox" name="known_input_visuals_res">
+       <property name="geometry">
+        <rect>
+         <x>210</x>
+         <y>60</y>
+         <width>41</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </widget>

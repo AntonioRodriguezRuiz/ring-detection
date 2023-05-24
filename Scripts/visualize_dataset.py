@@ -95,10 +95,10 @@ class DataSetVis():
         else:
             next_set_type()
 
-def init_vis(dataset_dir):
+def init_vis(dataset_dir, known_data):
     global DATASET_LOCATION, KNOWN_DATA
     DATASET_LOCATION = dataset_dir
-    KNOWN_DATA = False #TODO CHANGE WITH INPUT
+    KNOWN_DATA = known_data
     if not os.path.exists(DATASET_LOCATION) or len(os.listdir(DATASET_LOCATION)) == 0:
         message = QMessageBox()
         message.setText(f"The provided dataset does not exist or its empty:\n{DATASET_LOCATION}")

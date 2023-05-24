@@ -136,9 +136,8 @@ class ResultsVis():
                 Button(visualize_window, text="Finish", command=finish).pack(side=LEFT, expand=True)
                 visualize_window.mainloop()
 
-def init_res_vis(results_path):
+def init_res_vis(results_path, known_data):
     global RESULTS, KNOWN_DATA
-    kwnon_data = 0
 
     if not os.path.isfile(f"{results_path}"):
         message = QMessageBox()
@@ -148,6 +147,6 @@ def init_res_vis(results_path):
 
     f = open(f"{results_path}")
     RESULTS = json.load(f)
-    KNOWN_DATA = bool(kwnon_data) # TODO CHANGE WITH INPUT
+    KNOWN_DATA = known_data
     res_vis = ResultsVis("clean")
     res_vis.visualize("clean")
