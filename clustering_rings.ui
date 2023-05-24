@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>2</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="generation_tab">
      <attribute name="title">
@@ -560,7 +560,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Number of Circumferences</string>
+       <string>Number of Centroids</string>
       </property>
      </widget>
      <widget class="QLineEdit" name="num_circs_input_detection">
@@ -573,7 +573,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>Number of centroids</string>
+       <string>Number of centroids used for clustering</string>
       </property>
       <property name="text">
        <string/>
