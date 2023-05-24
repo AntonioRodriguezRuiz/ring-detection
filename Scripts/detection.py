@@ -103,7 +103,7 @@ def get_total_error(centers, rings, points, membership_matrix):
 
 ## MAIN LOOP
 
-def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, membeership_thress, data_known):
+def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, membeership_thress, num_circ, data_known):
     global DATASESET_LOCATION, OUTPUT_DIRECTORY, FUZZINESS_RANGE, ATTEMPTS, MAX_ITERATIONS, MEMBERSHIP_THRESSHOLD, DATA_KNOWN, NUM_CIRCLES
     try:
         DATASET_LOCATION = dataset_location
@@ -113,7 +113,7 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
         MAX_ITERATIONS = int(max_iter)
         MEMBERSHIP_THRESSHOLD = float(membeership_thress)
         DATA_KNOWN = data_known
-        NUM_CIRCLES = int(3)
+        NUM_CIRCLES = int(num_circ)
     except Exception as e:
         message = QMessageBox()
         message.setText(f"Some input was invalid:\n{e}")

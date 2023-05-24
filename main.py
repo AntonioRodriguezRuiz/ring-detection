@@ -27,6 +27,7 @@ class ClusteringRingsGUI(QMainWindow):
                                                             self.attempts_input.text().strip(),
                                                             self.max_iter_input.text().strip(),
                                                             self.mem_thress_input.text().strip(),
+                                                            self.num_circs_input_detection.text().strip(), 
                                                             self.known_input_detection.isChecked()))
         
         self.vis_dataset_button.clicked.connect(lambda: init_vis(self.dataset_input_visuals.text().strip(),
