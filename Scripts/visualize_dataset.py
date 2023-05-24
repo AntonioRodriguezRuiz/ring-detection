@@ -12,13 +12,18 @@ from Scripts.utils import PointsSet
 
 def extract_point_sets(df):
     data = []
-    for index, row in df.iterrows():
+    if KNOWN_DATA:
+        for _, row in df.iterrows():
+            existing_ps = next(filter(lambda ps: ps.circ_no==row.circ_no if not math.isnan(row.circ_no) else ps.circ_no is None, data), None)
+            if existing_ps is not None:
+                existing_ps.add_point((row.point_x, row.point_y))
+            else:
+                data.append(PointsSet.parse([(row.point_x, row.point_y)], (row.center_x, row.center_y), row.radius, row.circ_no))
         
-        existing_ps = next(filter(lambda ps: ps.circ_no==row.circ_no if not math.isnan(row.circ_no) else ps.circ_no is None, data), None)
-        if existing_ps is not None:
-            existing_ps.add_point((row.point_x, row.point_y))
-        else:
-            data.append(PointsSet.parse([(row.point_x, row.point_y)], (row.center_x, row.center_y), row.radius, row.circ_no))
+    else:
+        for _, row in df.iterrows():
+            data.append(PointsSet.parse([(row.point_x, row.point_y)], math.nan, math.nan, math.nan))
+
     return data
 
 # Main loop
@@ -38,11 +43,11 @@ class DataSetVis():
                 set_color = random.uniform(0, 100)
                 while(set_color in c):
                     set_color = random.uniform(0, 100)
-                c.extend([set_color for _ in points_set.points])
+                c.extend([set_color for _ in points_set.points]) if KNOWN_DATA else None
 
             fig = Figure(figsize=(5, 5), dpi=100)
             ax = fig.add_subplot()
-            ax.scatter(*zip(*points), s=10, c=c)
+            ax.scatter(*zip(*points), s=10, c=c) if KNOWN_DATA else ax.scatter(*zip(*points), s=10)
             ax.set(xlim=(0, 100), ylim=(0, 100))
             ax.set_aspect('equal')
             
@@ -91,8 +96,9 @@ class DataSetVis():
             next_set_type()
 
 def init_vis(dataset_dir):
-    global DATASET_LOCATION
+    global DATASET_LOCATION, KNOWN_DATA
     DATASET_LOCATION = dataset_dir
+    KNOWN_DATA = False #TODO CHANGE WITH INPUT
     if not os.path.exists(DATASET_LOCATION) or len(os.listdir(DATASET_LOCATION)) == 0:
         message = QMessageBox()
         message.setText(f"The provided dataset does not exist or its empty:\n{DATASET_LOCATION}")

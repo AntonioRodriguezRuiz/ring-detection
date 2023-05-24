@@ -62,7 +62,7 @@ def get_data(set_type):
 # Main function
 
 def generate(num_circ, num_images, randomness, range_radius, range_points, noise_ratio, output):
-    global NUM_CIRC, NUM_IMAGES, RANDOMNESS, RANGE_RADIUS, RANGE_POINTS, NOISE_RATIO, OUTPUT
+    global NUM_CIRC, NUM_IMAGES, RANDOMNESS, RANGE_RADIUS, RANGE_POINTS, NOISE_RATIO, OUTPUT, KNOWN_DATA
     try:
         NUM_CIRC = int(num_circ)
         NUM_IMAGES = int(num_images)
@@ -71,6 +71,7 @@ def generate(num_circ, num_images, randomness, range_radius, range_points, noise
         RANGE_POINTS = (int(range_points.split(",")[0]), int(range_points.split(",")[1]))
         NOISE_RATIO = float(noise_ratio)
         OUTPUT = output
+        KNOWN_DATA = False # TODO CHANGE WITH INPUT
     except Exception as e:
         message = QMessageBox()
         message.setText(f"Some input was invalid:\n{e}")
@@ -91,10 +92,14 @@ def generate(num_circ, num_images, randomness, range_radius, range_points, noise
         for data in dataset:
             data_frame_list = []
             for points_set in data:
-                data_frame_list.extend(points_set.unpack())
+                data_frame_list.extend(points_set.unpack()) if KNOWN_DATA else data_frame_list.extend(points_set.points)
             
-            plane_pd = pd.DataFrame(data_frame_list,
-                                    columns=["point_x", "point_y", "center_x", "center_y", "radius", "circ_no"])
+            if KNOWN_DATA:
+                plane_pd = pd.DataFrame(data_frame_list,
+                                        columns=["point_x", "point_y", "center_x", "center_y", "radius", "circ_no"])
+            else:
+                plane_pd = pd.DataFrame(data_frame_list,
+                                        columns=["point_x", "point_y"])
 
             # We save the data in a csv, in the output folder specified, continue to the next circle
             plane_pd.to_csv(OUTPUT+f"/{set_type}/{counter}.csv", sep=";", index=False)

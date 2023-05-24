@@ -8,20 +8,26 @@ from PyQt5.QtWidgets import *
 
 def extract_point_sets(df):
     data = []
-    for index, row in df.iterrows():
+    if DATA_KNOWN:
+        for _, row in df.iterrows():
+            existing_ps = next(filter(lambda ps: ps.circ_no==row.circ_no if not math.isnan(row.circ_no) else ps.circ_no is None, data), None)
+            if existing_ps is not None:
+                existing_ps.add_point((row.point_x, row.point_y))
+            else:
+                data.append(PointsSet.parse([(row.point_x, row.point_y)], (row.center_x, row.center_y), row.radius, row.circ_no))
         
-        existing_ps = next(filter(lambda ps: ps.circ_no==row.circ_no if not math.isnan(row.circ_no) else ps.circ_no is None, data), None)
-        if existing_ps is not None:
-            existing_ps.add_point((row.point_x, row.point_y))
-        else:
-            data.append(PointsSet.parse([(row.point_x, row.point_y)], (row.center_x, row.center_y), row.radius, row.circ_no))
+        noise = [ps.points for ps in list(filter(lambda x : x.is_noise() , data))]
+        rings = sorted(list(filter(lambda x : not x.is_noise() , data)), key=lambda x: x.circ_no)
+    else:
+        for _, row in df.iterrows():
+            data.append(PointsSet.parse([(row.point_x, row.point_y)], math.nan, math.nan, math.nan))
+        rings = None
+        noise = None
 
     points = []
     for points_set in data:
         points.extend(points_set.points)
-    
-    rings = sorted(list(filter(lambda x : not x.is_noise() , data)), key=lambda x: x.circ_no)
-    noise = [ps.points for ps in list(filter(lambda x : x.is_noise() , data))]
+
     return (points, rings, noise)
 
 ## ALGORITHM
@@ -98,7 +104,7 @@ def get_total_error(centers, rings, points, membership_matrix):
 ## MAIN LOOP
 
 def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, membeership_thress):
-    global DATASESET_LOCATION, OUTPUT_DIRECTORY, FUZZINESS_RANGE, ATTEMPTS, MAX_ITERATIONS, MEMBERSHIP_THRESSHOLD
+    global DATASESET_LOCATION, OUTPUT_DIRECTORY, FUZZINESS_RANGE, ATTEMPTS, MAX_ITERATIONS, MEMBERSHIP_THRESSHOLD, DATA_KNOWN, NUM_CIRCLES
     try:
         DATASET_LOCATION = dataset_location
         OUTPUT_DIRECTORY = output_dir
@@ -106,6 +112,8 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
         ATTEMPTS = int(attempts)
         MAX_ITERATIONS = int(max_iter)
         MEMBERSHIP_THRESSHOLD = float(membeership_thress)
+        DATA_KNOWN = False # TODO CHANGE WITH INPUT
+        NUM_CIRCLES = int(3)
     except Exception as e:
         message = QMessageBox()
         message.setText(f"Some input was invalid:\n{e}")
@@ -127,32 +135,45 @@ def detect(dataset_location, output_dir, fuzziness_range, attempts, max_iter, me
             if filename.endswith(".csv"): 
                 df = pd.read_csv(f"{DATASET_LOCATION}/{set_type}/{filename}",header=0, sep=";")
                 points, rings, noise = extract_point_sets(df)
-                predicted_centers, membership_matrix = min([alg_perform(len(rings), points) for _ in tqdm(range(ATTEMPTS), desc=f"Predicting {filename}", leave=False)], key=lambda c: get_total_error(c[0], rings, points, c[1]))
+                if DATA_KNOWN:
+                    predicted_centers, membership_matrix = min([alg_perform(len(rings), points) for _ in tqdm(range(ATTEMPTS), desc=f"Predicting {filename}", leave=False)], key=lambda c: get_total_error(c[0], rings, points, c[1]))
 
-                pairs = find_pairs(predicted_centers, [r.center for r in rings])
-                centers_error = get_centers_error(pairs, predicted_centers, rings)
-                radii_error = get_radii_error(pairs, predicted_centers, rings, points, membership_matrix)
-                results[set_type][filename] =   {
-                                                "circs_num": len(rings),
-                                                "circunferences":
-                                                {
-                                                    f"{r.circ_no}":
+                else:
+                    predicted_centers, membership_matrix = alg_perform(NUM_CIRCLES, points)
+
+                pairs = find_pairs(predicted_centers, [r.center for r in rings]) if DATA_KNOWN else None
+                centers_error = get_centers_error(pairs, predicted_centers, rings) if DATA_KNOWN else None
+                radii_error = get_radii_error(pairs, predicted_centers, rings, points, membership_matrix) if DATA_KNOWN else None
+                if DATA_KNOWN:
+                    results[set_type][filename] =   {
+                                                    "circs_num": len(rings),
+                                                    "circunferences":
                                                     {
-                                                        "points": r.points,
-                                                        "center": r.center,
-                                                        "radius": r.radius
+                                                        f"{r.circ_no}":
+                                                        {
+                                                            "points": r.points,
+                                                            "center": r.center,
+                                                            "radius": r.radius
+                                                        }
+                                                        for r in rings
+                                                    },
+                                                    "noise": noise,
+                                                    "pairs": pairs, 
+                                                    "predicted_centers": predicted_centers, 
+                                                    "predicted_radii": [estimate_radii(predicted_centers[p[0]], points, membership_matrix[:, p[0]]) for p in pairs],
+                                                    "membership_matrix" : membership_matrix.tolist(),
+                                                    "centers_error": centers_error,
+                                                    "radii_error": radii_error,
+                                                    "tot_error": get_error(centers_error, radii_error)
                                                     }
-                                                    for r in rings
-                                                },
-                                                "noise": noise,
-                                                "pairs": pairs, 
-                                                "predicted_centers": predicted_centers, 
-                                                "predicted_radii": [estimate_radii(predicted_centers[p[0]], points, membership_matrix[:, p[0]]) for p in pairs],
-                                                "membership_matrix" : membership_matrix.tolist(),
-                                                "centers_error": centers_error,
-                                                "radii_error": radii_error,
-                                                "tot_error": get_error(centers_error, radii_error)
-                                                }
+                else:
+                    results[set_type][filename] =   {
+                                                    "circs_num": NUM_CIRCLES,
+                                                    "points": points,
+                                                    "predicted_centers": predicted_centers, 
+                                                    "predicted_radii": [estimate_radii(predicted_centers[i], points, membership_matrix[:, i]) for i in range(len(predicted_centers))],
+                                                    "membership_matrix" : membership_matrix.tolist()
+                                                    }
 
     current_moment = datetime.datetime.now()
     if not os.path.exists(f"{OUTPUT_DIRECTORY}"):

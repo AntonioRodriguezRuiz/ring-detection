@@ -54,35 +54,49 @@ class ResultsVis():
         def plot_data(data):
             points = []
             c = []
-            for key, circ in data["circunferences"].items():
-                points.extend(circ["points"])
+            if KNOWN_DATA:
+                for key, circ in data["circunferences"].items():
+                    points.extend(circ["points"])
+                    
+                    # We set the color for the set, making sure its different for each set
+                    set_color = random.randint(0, 100)
+                    while(set_color in c):
+                        set_color = random.randint(0, 100)
+                    c.extend([set_color for _ in circ["points"]])
                 
-                # We set the color for the set, making sure its different for each set
+                noise = list(*data["noise"])
+                points.extend(noise)
                 set_color = random.randint(0, 100)
                 while(set_color in c):
                     set_color = random.randint(0, 100)
-                c.extend([set_color for _ in circ["points"]])
-            
-            noise = list(*data["noise"])
-            points.extend(noise)
-            set_color = random.randint(0, 100)
-            while(set_color in c):
-                set_color = random.randint(0, 100)
-            c.extend([set_color for _ in noise])
+                c.extend([set_color for _ in noise])
 
-            rings = []
-            for det_center_ind, _ in data["pairs"]:
-                points.append(data["predicted_centers"][det_center_ind])
-                rings.append(plt.Circle(data["predicted_centers"][det_center_ind], data["predicted_radii"][det_center_ind], fill=False))
-                c.append(0.0)
+                rings = []
+                for det_center_ind, _ in data["pairs"]:
+                    points.append(data["predicted_centers"][det_center_ind])
+                    rings.append(plt.Circle(data["predicted_centers"][det_center_ind], data["predicted_radii"][det_center_ind], fill=False))
+                    c.append(0.0)
 
-            fig = Figure(figsize=(5, 5), dpi=100)
-            ax = fig.add_subplot()
-            ax.scatter(*zip(*points), s=10, c=c)
-            for r in rings:
-                ax.add_artist( r )
-            ax.set(xlim=(0, 100), ylim=(0, 100))
-            ax.set_aspect('equal')
+                fig = Figure(figsize=(5, 5), dpi=100)
+                ax = fig.add_subplot()
+                ax.scatter(*zip(*points), s=10, c=c)
+                for r in rings:
+                    ax.add_artist( r )
+                ax.set(xlim=(0, 100), ylim=(0, 100))
+                ax.set_aspect('equal')
+            else:
+                points.extend(data["points"])
+                rings = []
+                for i in range(len(data["predicted_centers"])):
+                    rings.append(plt.Circle(data["predicted_centers"][i], data["predicted_radii"][i], fill=False))
+                
+                fig = Figure(figsize=(5, 5), dpi=100)
+                ax = fig.add_subplot()
+                ax.scatter(*zip(*points), s=10)
+                for r in rings:
+                    ax.add_artist( r )
+                ax.set(xlim=(0, 100), ylim=(0, 100))
+                ax.set_aspect('equal')
             
             canvas = FigureCanvasTkAgg(fig, master=visualize_window)
             canvas.draw()
@@ -123,7 +137,8 @@ class ResultsVis():
                 visualize_window.mainloop()
 
 def init_res_vis(results_path):
-    global RESULTS
+    global RESULTS, KNOWN_DATA
+    kwnon_data = 0
 
     if not os.path.isfile(f"{results_path}"):
         message = QMessageBox()
@@ -133,5 +148,6 @@ def init_res_vis(results_path):
 
     f = open(f"{results_path}")
     RESULTS = json.load(f)
+    KNOWN_DATA = bool(kwnon_data) # TODO CHANGE WITH INPUT
     res_vis = ResultsVis("clean")
     res_vis.visualize("clean")
